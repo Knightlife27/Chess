@@ -1,6 +1,7 @@
 import "./styles.css";
 import React, { useState, useEffect } from "react";
 
+
 // Initialized Objects, Variables, Loops, & useStates:
 const chessPieces = {
   whiteKing: {
@@ -100,6 +101,27 @@ const App = () => {
       setAlert({ show: false, message: "" });
     }, 3000);
   };
+  
+  const getAIMove = async () => {
+    const response = await fetch('http://localhost:5000/get_move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ board: board }),  // Send the current React board state
+    });
+    const data = await response.json();
+    return data.move;
+  };
+
+  const blackTurnAIMove = async () => {
+    if (playerTurn === 'black') {
+      const move = await getAIMove(board);
+      // Process the move and update your board state
+      executeMove(move.startRow, move.startCol, move.endRow, move.endCol);
+    }
+  };
+
 
   // handleClick => 
   // 1) Define the chess piece or else define it as null.
@@ -220,17 +242,6 @@ const App = () => {
       }
     }
 
-
-
-
-
-
-
-
-
-
-
-
     showAlert("Invalid move: Move does not comply with the rules.");
     return false;
   };
@@ -270,6 +281,11 @@ const App = () => {
     setBoard(newBoard);
     setSelectedPiece(null);
     setPlayerTurn(playerTurn === 'white' ? 'black' : 'white');
+
+    if (playerTurn === 'black') {
+      setTimeout(makeAIMove, 500); // Add a small delay for better UX
+    }
+
   };
 
   return (
