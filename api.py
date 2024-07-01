@@ -12,14 +12,25 @@ def convert_react_board_to_chess_board(react_board):
     board = chess.Board()
     board.clear()  # Clear the default starting position
 
+    unicode_to_fen = {
+        '♔': 'K', '♕': 'Q', '♖': 'R', '♗': 'B', '♘': 'N', '♙': 'P',
+        '♚': 'k', '♛': 'q', '♜': 'r', '♝': 'b', '♞': 'n', '♟': 'p'
+    }
+
     for row in range(8):
         for col in range(8):
             piece = react_board[row][col]
             if piece:
-                chess_piece = chess.Piece.from_symbol(piece['symbol'])
-                square = chess.square(col, 7 - row)  # chess library uses 0-63 notation
-                board.set_piece_at(square, chess_piece)
+                fen_symbol = unicode_to_fen.get(piece['symbol'])
+                if fen_symbol:
+                    chess_piece = chess.Piece.from_symbol(fen_symbol)
+                    square = chess.square(col, 7 - row)  # chess library uses 0-63 notation
+                    board.set_piece_at(square, chess_piece)
+                else:
+                    print(f"Unknown piece symbol: {piece['symbol']}")
+
     return board
+
 # Function that converts Python data into React data.
 def convert_chess_move_to_react_move(chess_move):
     from_square = chess_move.from_square
