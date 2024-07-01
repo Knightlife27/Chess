@@ -102,23 +102,55 @@ const App = () => {
     }, 3000);
   };
   
-  const getAIMove = async () => {
-    const response = await fetch('http://localhost:5000/get_move', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ board: board }),  // Send the current React board state
-    });
-    const data = await response.json();
-    return data.move;
-  };
+  useEffect(() => {
+    if (playerTurn === 'black') {
+      blackTurnAIMove();
+    }
+  }, [playerTurn]);
 
+
+  const getAIMove = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get_move', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ board: board }),  // Send the current React board state
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      if (!data.move) {
+        throw new Error('No move data received from AI');
+      }
+  
+      return data.move;
+    } catch (error) {
+      console.error('Error getting AI move:', error.message);
+      // You might want to handle this error in your UI, e.g., show a message to the user
+      return null;
+    }
+  };
+  
   const blackTurnAIMove = async () => {
     if (playerTurn === 'black') {
-      const move = await getAIMove(board);
-      // Process the move and update your board state
-      executeMove(move.startRow, move.startCol, move.endRow, move.endCol);
+      try {
+        const move = await getAIMove(board);
+        if (move) {
+          executeMove(move.startRow, move.startCol, move.endRow, move.endCol);
+        } else {
+          // Handle the case where no move was returned
+          console.log('AI did not return a valid move');
+          // You might want to add some UI feedback here
+        }
+      } catch (error) {
+        console.error('Error during AI move:', error);
+        // Handle the error, perhaps by showing a message to the user
+      }
     }
   };
 

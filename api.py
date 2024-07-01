@@ -12,11 +12,6 @@ def convert_react_board_to_chess_board(react_board):
     board = chess.Board()
     board.clear()  # Clear the default starting position
 
-    symbol_to_piece = {
-            '♔': 'K', '♕': 'Q', '♖': 'R', '♗': 'B', '♘': 'N', '♙': 'P',
-            '♚': 'k', '♛': 'q', '♜': 'r', '♝': 'b', '♞': 'n', '♟': 'p'
-        }
-
     for row in range(8):
         for col in range(8):
             piece = react_board[row][col]
