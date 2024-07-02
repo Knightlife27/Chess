@@ -6,7 +6,7 @@ class ChessAI:
     # Where we store our piece and square VALUES.
         # 1) Store piece values.
         # 2) Store square values.
-    def __init__(self, depth=5):
+    def __init__(self, depth=3):
         self.depth = depth
 
         # 1) Store piece values.

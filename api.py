@@ -4,7 +4,7 @@ from chessai import ChessAI
 import chess
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 ai = ChessAI()
 # Function that converts React data into Python data.
@@ -16,6 +16,10 @@ def convert_react_board_to_chess_board(react_board):
         '♔': 'K', '♕': 'Q', '♖': 'R', '♗': 'B', '♘': 'N', '♙': 'P',
         '♚': 'k', '♛': 'q', '♜': 'r', '♝': 'b', '♞': 'n', '♟': 'p'
     }
+
+    if not isinstance(react_board, list) or len(react_board) != 8:
+        raise ValueError(f"Invalid board structure. Expected 8x8 array, got: {react_board}")
+
 
     for row in range(8):
         for col in range(8):
@@ -48,17 +52,28 @@ def home():
 
 @app.route('/get_move', methods=['POST'])
 def get_move():
+
+    print("Received a request to /get_move")
+    print("Raw request data:", request.data)
+
     try:
+        print("Received data:", request.data)  # Log the raw data
         react_board = request.json['board']
+        print("Parsed board:", react_board)  # Log the parsed board
+
         chess_board = convert_react_board_to_chess_board(react_board)
+        print("Converted chess board:", chess_board)
         
         ai.board = chess_board  # Update AI's internal board
         chess_move = ai.choose_move(chess_board)
+        print("AI selected move:", chess_move)
         
         if chess_move:
             react_move = convert_chess_move_to_react_move(chess_move)
-            return jsonify({'move': react_move})
+            print("Converted React move:", react_move)
+            return jsonify({'move': react_move}), 200
         else:
+            print("No valid move found")
             return jsonify({'error': 'No valid move found'}), 400
     except Exception as e:
         print(f"Error processing move: {str(e)}")

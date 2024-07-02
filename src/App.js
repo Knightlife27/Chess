@@ -108,51 +108,79 @@ const App = () => {
     }
   }, [playerTurn]);
 
-
   const getAIMove = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/get_move', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ board: board }),  // Send the current React board state
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      if (!data.move) {
-        throw new Error('No move data received from AI');
-      }
-  
-      return data.move;
-    } catch (error) {
-      console.error('Error getting AI move:', error.message);
-      // You might want to handle this error in your UI, e.g., show a message to the user
+  try {
+    const response = await fetch('https://improved-space-funicular-5gq9gprrwrgj346gj-5000.app.github.dev/get_move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ board: board }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Server error:', errorData.error);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Received move from server:', data.move);
+
+    if (!data.move) {
+      console.error('No move data received from AI');
       return null;
     }
-  };
+
+    return data.move;
+  } catch (error) {
+    console.error('Error in getAIMove:', error);
+    return null;
+  }
+};
+
+
+  // const getAIMove = async () => {
+  //   const apiUrl = 'http://localhost:5000/get_move';  // or whatever your API URL is
+  //   console.log('Attempting to fetch from:', apiUrl);
+
+
+  //   const response = await fetch('https://improved-space-funicular-5gq9gprrwrgj346gj-5000.app.github.dev/get_move', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ board: board }),
+  //   });
+
+  //   console.log('Sending data:', bodyData);
+  
+  //   if (!response.ok) {
+  //     console.error(`HTTP error! status: ${response.status}`);
+  //     return null;
+  //   }
+  
+  //   const data = await response.json();
+  //   if (!data.move) {
+  //     console.error('No move data received from AI');
+  //     return null;
+  //   }
+  
+  //   return data.move;
+  // };
   
   const blackTurnAIMove = async () => {
     if (playerTurn === 'black') {
-      try {
-        const move = await getAIMove(board);
-        if (move) {
-          executeMove(move.startRow, move.startCol, move.endRow, move.endCol);
-        } else {
-          // Handle the case where no move was returned
-          console.log('AI did not return a valid move');
-          // You might want to add some UI feedback here
-        }
-      } catch (error) {
-        console.error('Error during AI move:', error);
-        // Handle the error, perhaps by showing a message to the user
+      const move = await getAIMove(board);
+      if (move) {
+        executeMove(move.startRow, move.startCol, move.endRow, move.endCol);
+      } else {
+        console.log('AI did not return a valid move');
+        // You might want to add some UI feedback here
       }
     }
-  };
+  }; 
+  
 
 
   // handleClick => 
