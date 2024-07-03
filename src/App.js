@@ -108,38 +108,69 @@ const App = () => {
     }
   }, [playerTurn]);
 
-  const getAIMove = async () => {
-  try {
-    const response = await fetch('https://improved-space-funicular-5gq9gprrwrgj346gj-5000.app.github.dev/get_move', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ board: board }),
-    });
+  // const getAIMove = async () => {
+  // try {
+  //   const response = await fetch('https://improved-space-funicular-5gq9gprrwrgj346gj-5000.app.github.dev/get_move', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ board: board }),
+  //   });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Server error:', errorData.error);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  //   if (!response.ok) {
+  //     const errorData = await response.json();
+  //     console.error('Server error:', errorData.error);
+  //     throw new Error(`HTTP error! status: ${response.status}`);
+  //   }
 
-    const data = await response.json();
-    console.log('Received move from server:', data.move);
+  //   const data = await response.json();
+  //   console.log('Received move from server:', data.move);
 
-    if (!data.move) {
-      console.error('No move data received from AI');
-      return null;
-    }
+  //   if (!data.move) {
+  //     console.error('No move data received from AI');
+  //     return null;
+  //   }
 
-    return data.move;
-  } catch (error) {
-    console.error('Error in getAIMove:', error);
+  //   return data.move;
+  // } catch (error) {
+  //   console.error('Error in getAIMove:', error);
+  //   return null;
+  // }
+// };
+
+const getAIMove = async () => {
+  console.log('Sending board state:', board);
+
+  const response = await fetch('https://improved-space-funicular-5gq9gprrwrgj346gj-5000.app.github.dev/get_move', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ board: board }),
+  });
+
+  console.log('Response status:', response.status);
+  console.log('Response headers:', Object.fromEntries(response.headers));
+
+  const responseText = await response.text();
+  console.log('Raw response:', responseText);
+
+  if (!response.ok) {
+    console.error(`HTTP error! status: ${response.status}, body: ${responseText}`);
     return null;
   }
+
+  const data = JSON.parse(responseText);
+  console.log('Parsed response:', data);
+
+  if (!data.move) {
+    console.error('No move data received from AI');
+    return null;
+  }
+
+  return data.move;
 };
-
-
   // const getAIMove = async () => {
   //   const apiUrl = 'http://localhost:5000/get_move';  // or whatever your API URL is
   //   console.log('Attempting to fetch from:', apiUrl);
@@ -343,7 +374,7 @@ const App = () => {
     setPlayerTurn(playerTurn === 'white' ? 'black' : 'white');
 
     if (playerTurn === 'black') {
-      setTimeout(makeAIMove, 500); // Add a small delay for better UX
+      setTimeout(getAIMove, 500); // Add a small delay for better UX
     }
 
   };
