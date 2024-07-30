@@ -4,9 +4,10 @@ from chessai import ChessAI
 import chess
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
 
 ai = ChessAI()
+
 # Function that converts React data into Python data.
 def convert_react_board_to_chess_board(react_board):
     board = chess.Board()
@@ -46,6 +47,15 @@ def convert_chess_move_to_react_move(chess_move):
 def home():
     return "Chess AI server is running!"
 
+@app.route('/test_post', methods=['POST'])
+def test_post():
+    data = request.json
+    return jsonify({"message": "Received", "data": data})
+
+@app.route('/get_move', methods=['OPTIONS'])
+def handle_options():
+    return '', 204
+
 @app.route('/get_move', methods=['POST'])
 def get_move():
     try:
@@ -54,15 +64,21 @@ def get_move():
         
         ai.board = chess_board  # Update AI's internal board
         chess_move = ai.choose_move(chess_board)
-        
+        print("Received request to /get_move")
+        print("Request method:", request.method)
+        print("Request headers:", request.headers)
+        print("Request body:", request.get_data(as_text=True))
+
         if chess_move:
             react_move = convert_chess_move_to_react_move(chess_move)
             return jsonify({'move': react_move})
         else:
-            return jsonify({'error': 'No valid move found'}), 400
+            return jsonify({'error': 'No valid move found'}), 404
+    except KeyError:
+        return jsonify({'error': 'Invalid request data'}), 400
     except Exception as e:
         print(f"Error processing move: {str(e)}")
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

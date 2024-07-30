@@ -1,0 +1,2 @@
+.App{font-family:sans-serif;text-align:center}.checkers{flex-wrap:wrap;height:800px;justify-content:flex-start;width:800px}.checkers,.rowClass{display:flex}.whiteSquare{background-color:#0ba38c}.blackSquare,.whiteSquare{align-items:center;border:1px solid #000;box-sizing:border-box;display:flex;height:50px;justify-content:center;margin:0;padding:0;width:50px}.blackSquare{background-color:red}.black,.white{font-size:70px}
+/*# sourceMappingURL=main.cb1828f8.css.map*/
