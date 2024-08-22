@@ -127,6 +127,7 @@ const App = () => {
 
   const getAIMove = async () => {
     console.log("Attempting to get AI move");
+    console.log("Current board state:", board);
     try {
         const response = await fetch('https://ominous-pancake-5gq9gprrwrrw24667-5000.app.github.dev/get_move', {
             method: 'POST',
