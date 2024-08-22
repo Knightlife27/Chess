@@ -2,65 +2,82 @@
 import "./styles.css";
 import React, { useState, useEffect } from "react";
 
+
+// Import chess piece images from the assets folder
+import whiteKingImg from './assets/wk.png'; 
+import whiteQueenImg from './assets/wq.png';
+import whiteRookImg from './assets/wr.png';
+import whiteBishopImg from './assets/wb.png';
+import whiteKnightImg from './assets/wn.png';
+import whitePawnImg from './assets/wp.png';
+import blackKingImg from './assets/bk.png';
+import blackQueenImg from './assets/bq.png';
+import blackRookImg from './assets/br.png';
+import blackBishopImg from './assets/bb.png';
+import blackKnightImg from './assets/bn.png';
+import blackPawnImg from './assets/bp.png';
+
+
+
 // Initialized Objects, Variables, Loops, & useStates:
 const chessPieces = {
   whiteKing: {
-    symbol: '♔',
+    image: whiteKingImg,
     color: 'white',
     type: 'king'
   },
   whiteQueen: {
-    symbol: '♕',
+    image: whiteQueenImg,
     color: 'white',
     type: 'queen'
   },
   whiteRook: {
-    symbol: '♖',
+    image: whiteRookImg,
     color: 'white',
     type: 'rook',
   },
   whiteBishop: {
-    symbol: '♗',
+    image: whiteBishopImg,
     color: 'white',
     type: 'bishop'
   },
   whiteKnight: {
-    symbol: '♘',
+    image: whiteKnightImg,
     color: 'white',
     type: 'knight'
   },
   whitePawn: {
-    symbol: '♙',
+    image: whitePawnImg,
     color: 'white',
     type: 'pawn'
   },
   blackKing: {
-    symbol: '♚',
+    image: blackKingImg,
     color: 'black',
     type: 'king'
   },
   blackQueen: {
-    symbol: '♛',
+    image: blackQueenImg,
     color: 'black',
     type: 'queen'
   },
   blackRook: {
-    symbol: '♜',
+    image: blackRookImg,
     color: 'black',
     type: 'rook'
   },
   blackBishop: {
-    symbol: '♝',
+    image: blackBishopImg,
     color: 'black',
     type: 'bishop'
   },
   blackKnight: {
-    symbol: '♞',
+    image: blackKnightImg,
     color: 'black',
     type: 'knight'
   },
   blackPawn: {
-    symbol: '♙',
+    image: blackPawnImg,
     color: 'black',
     type: 'pawn'
   },
@@ -316,9 +333,9 @@ const blackTurnAIMove = async () => {
   return true;
 };
 
-  return (
+return (
+  <div className="chessboard-container">
     <div className="chessPieces">
-      <h1>Let's Create This Chess Game</h1>
       {board.map((row, rowIndex) => (
         <div key={rowIndex} className="rowClass">
           {row.map((piece, colIndex) => (
@@ -332,13 +349,18 @@ const blackTurnAIMove = async () => {
               onClick={() => handleClick(rowIndex, colIndex)}
             >
               {piece ? (
-                <div className={`${piece.color}`}>{piece.symbol}</div>
+                <img 
+                  src={piece.image} 
+                  alt={`${piece.color} ${piece.type}`} 
+                  className={`chess-piece ${piece.color}`}
+                />
               ) : null}
             </div>
           ))}
         </div>
       ))}
     </div>
+  </div>
   );
 }
 

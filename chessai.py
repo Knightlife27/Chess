@@ -188,7 +188,7 @@ class ChessAI:
 
     def evaluate_board(self, board):
         if board.is_checkmate():
-            return -9999 if board.turn == chess.WHITE else 9999
+            return 9999 if board.turn == chess.WHITE else -9999
         if board.is_stalemate() or board.is_insufficient_material():
             return 0
         
@@ -200,13 +200,13 @@ class ChessAI:
                 position_value = self.position_values[piece.piece_type][piece.color][square]
 
                 if piece.color == chess.WHITE:
-                    score += value + position_value
-                else: 
                     score -= value + position_value
+                else: 
+                    score += value + position_value
 
         # Consider mobility (number of legal moves)
         mobility = len(list(board.legal_moves))
-        score += mobility if board.turn == chess.WHITE else -mobility
+        score += mobility if board.turn == chess.BLACK else -mobility
 
         # Consider check
         if board.is_check():
@@ -218,7 +218,7 @@ class ChessAI:
         if depth == 0 or board.is_game_over():
             return self.evaluate_board(board)
 
-        if maximizing_player:
+        if maximizing_player:  # Black's turn
             max_eval = float('-inf')
             for move in board.legal_moves:
                 board.push(move)
@@ -229,7 +229,7 @@ class ChessAI:
                 if beta <= alpha:
                     break
             return max_eval
-        else:
+        else:  # White's turn
             min_eval = float('inf')
             for move in board.legal_moves:
                 board.push(move)
@@ -242,49 +242,43 @@ class ChessAI:
             return min_eval
 
     def choose_move(self, board):
-        best_moves = []
-        best_eval = float('-inf') if board.turn == chess.WHITE else float('inf')
-        alpha = float('-inf')
-        beta = float('inf')
+        board.turn = chess.BLACK  # Ensure the board is always set to black's turn
 
+        best_moves = []
+        best_eval = float('inf')  # We want the minimum score for black
+        
         legal_moves = list(board.legal_moves)
+        print(f"Legal moves: {[board.san(move) for move in legal_moves]}")
+
         if not legal_moves:
             print("No legal moves available")
             return None
 
-        print(f"Legal moves: {[board.san(move) for move in legal_moves]}")
-
         for move in legal_moves:
+            # Check if the move captures its own piece
+            if board.piece_at(move.to_square) and board.piece_at(move.to_square).color == board.turn:
+                print(f"Skipping move {board.san(move)} because it captures own piece.")
+                continue
+
             if self.is_valid_move(board, move.from_square, move.to_square):
                 board.push(move)
-                eval = self.minimax(board, self.depth - 1, alpha, beta, board.turn != chess.WHITE)
+                eval = self.minimax(board, self.depth - 1, float('-inf'), float('inf'), True)
                 board.pop()
                 
                 print(f"Evaluating move: {board.san(move)}, Eval: {eval}")
 
-                if board.turn == chess.WHITE:
-                    if eval > best_eval:
-                        best_eval = eval
-                        best_moves = [move]
-                    elif eval == best_eval:
-                        best_moves.append(move)
-                else:
-                    if eval < best_eval:
-                        best_eval = eval
-                        best_moves = [move]
-                    elif eval == best_eval:
-                        best_moves.append(move)
+                if eval < best_eval:
+                    best_eval = eval
+                    best_moves = [move]
+                elif eval == best_eval:
+                    best_moves.append(move)
 
         if best_moves:
             chosen_move = random.choice(best_moves)
-            if chosen_move in legal_moves:
-                print(f"Chosen move: {board.san(chosen_move)} with eval: {best_eval}")
-                return chosen_move
-            else:
-                print(f"Warning: Chosen move {board.san(chosen_move)} is not in legal moves!")
-                return None
+            print(f"Chosen move: {board.san(chosen_move)} with eval: {best_eval}")
+            return chosen_move
         else:
-            print("No best move found")
+            print("No valid moves found")
             return None
 
     def update_board(self, board_state):
