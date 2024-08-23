@@ -32,6 +32,8 @@
   margin: 0 auto;
 }
 
+
+
 h1 {
   color: #333;
   margin-bottom: 20px;
@@ -52,6 +54,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 
 .blackSquare {
@@ -90,3 +93,5 @@ h1 {
     height: 95%;
   }
 }
+
+
