@@ -193,17 +193,18 @@ const blackTurnAIMove = async () => {
     }
 };
 
+
   const handleClick = (row, col) => {
     const chessPiece = board[row][col];
-    console.log(`Clicked on ${row} & ${col}`)
+    console.log(`Clicked on ${row} & ${col}`);
 
     if (selectedPiece) {
       if (isValidMove(selectedPiece.row, selectedPiece.col, row, col)) {
         executeMove(selectedPiece.row, selectedPiece.col, row, col);
       } else {
         showAlert("Invalid move. Please try again.");
-        setSelectedPiece(null);
       }
+      setSelectedPiece(null);
     } else {
       if (chessPiece && chessPiece.color === playerTurn) {
         setSelectedPiece({ chessPiece, row, col });
@@ -212,6 +213,7 @@ const blackTurnAIMove = async () => {
       }
     } 
   };
+
 
   const isPathClear = (board, startRow, startCol, endRow, endCol) => {
     console.log('isPathClear being called from', startRow, startCol, endRow, endCol)
@@ -342,11 +344,10 @@ return (
           {row.map((piece, colIndex) => (
             <div
               key={colIndex}
-              className={
-                colIndex % 2 === rowIndex % 2
-                  ? "whiteSquare"
-                  : "blackSquare"
-              }
+              className={`
+                ${colIndex % 2 === rowIndex % 2 ? "whiteSquare" : "blackSquare"}
+                ${selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex ? "selected-piece" : ""}
+              `}
               onClick={() => handleClick(rowIndex, colIndex)}
             >
               {piece ? (
@@ -362,7 +363,7 @@ return (
       ))}
     </div>
   </div>
-  );
+);
 }
 
 export default App;
