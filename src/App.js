@@ -107,6 +107,7 @@ const App = () => {
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [playerTurn, setPlayerTurn] = useState('white');
   const [alert, setAlert] = useState({ show: false, message: "" });
+  const [isAIThinking, setIsAIThinking] = useState(false);
 
   useEffect(() => {
     console.log('selectedPiece:', selectedPiece);
@@ -158,40 +159,76 @@ const App = () => {
         throw error;
     }
 };
-
 const blackTurnAIMove = async () => {
-    if (playerTurn !== 'black') {
-        console.log("Not black's turn, skipping AI move");
-        return;
-    }
+  if (playerTurn !== 'black') {
+      console.log("Not black's turn, skipping AI move");
+      return;
+  }
 
-    try {
-        const response = await getAIMove();
-        console.log('AI response:', response);
-        if (response && response.move) {
-            const move = response.move;
-            console.log('AI chose move:', move);
+  setIsAIThinking(true);
 
-            if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
-                const { startRow, startCol, endRow, endCol } = move;
-                const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
-                if (!moveSuccess) {
-                    console.error('AI attempted an invalid move');
-                    showAlert('AI attempted an invalid move');
-                }
-            } else {
-                console.log('AI returned an invalid move format');
-                showAlert('AI move error. Invalid move format.');
-            }
-        } else {
-            console.log('AI did not return a valid move');
-            showAlert('AI move error. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error during AI move:', error);
-        showAlert('Network error. Please check your connection and try again.');
-    }
+  try {
+      const response = await getAIMove();
+      console.log('AI response:', response);
+      if (response && response.move) {
+          const move = response.move;
+          console.log('AI chose move:', move);
+
+          if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
+              const { startRow, startCol, endRow, endCol } = move;
+              const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
+              if (!moveSuccess) {
+                  console.error('AI attempted an invalid move');
+                  showAlert('AI attempted an invalid move');
+              }
+          } else {
+              console.log('AI returned an invalid move format');
+              showAlert('AI move error. Invalid move format.');
+          }
+      } else {
+          console.log('AI did not return a valid move');
+          showAlert('AI move error. Please try again.');
+      }
+  } catch (error) {
+      console.error('Error during AI move:', error);
+      showAlert('Network error. Please check your connection and try again.');
+  } finally {
+      setIsAIThinking(false); // Set AI thinking state back to false
+  }
 };
+// const blackTurnAIMove = async () => {
+//     if (playerTurn !== 'black') {
+//         console.log("Not black's turn, skipping AI move");
+//         return;
+//     }
+
+//     try {
+//         const response = await getAIMove();
+//         console.log('AI response:', response);
+//         if (response && response.move) {
+//             const move = response.move;
+//             console.log('AI chose move:', move);
+
+//             if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
+//                 const { startRow, startCol, endRow, endCol } = move;
+//                 const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
+//                 if (!moveSuccess) {
+//                     console.error('AI attempted an invalid move');
+//                     showAlert('AI attempted an invalid move');
+//                 }
+//             } else {
+//                 console.log('AI returned an invalid move format');
+//                 showAlert('AI move error. Invalid move format.');
+//             }
+//         } else {
+//             console.log('AI did not return a valid move');
+//             showAlert('AI move error. Please try again.');
+//         }
+//     } catch (error) {
+//         console.error('Error during AI move:', error);
+//         showAlert('Network error. Please check your connection and try again.');
+//     }
+// };
 
 
   const handleClick = (row, col) => {
@@ -338,6 +375,11 @@ const blackTurnAIMove = async () => {
 
 return (
   <div className="chessboard-container">
+  {isAIThinking && (
+  <div className="ai-thinking-overlay">
+    <div className="ai-thinking-message">AI is thinking...</div>
+  </div>
+)}
     <div className="chessPieces">
       {board.map((row, rowIndex) => (
         <div key={rowIndex} className="rowClass">
