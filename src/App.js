@@ -130,106 +130,73 @@ const App = () => {
     console.log("Attempting to get AI move");
     console.log("Current board state:", board);
     try {
-        const response = await fetch('https://ominous-pancake-5gq9gprrwrrw24667-5000.app.github.dev/get_move', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                board: board,
-                turn: 'black'
-            }),
-        });
+      const response = await fetch('https://ominous-pancake-5gq9gprrwrrw24667-5000.app.github.dev/get_move', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          board: board,
+          turn: 'black'
+        }),
+      });
 
-        if (!response.ok) {
-            if (response.status === 404) {
-                throw new Error('No valid move found');
-            } else if (response.status === 400) {
-                throw new Error('Invalid request data');
-            } else {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('No valid move found');
+        } else if (response.status === 400) {
+          throw new Error('Invalid request data');
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+      }
 
-        const data = await response.json();
-        console.log('AI response data:', data);
-        return data;
+      const data = await response.json();
+      console.log('AI response data:', data);
+      return data;
     } catch (error) {
-        console.error('Error getting AI move:', error);
-        throw error;
+      console.error('Error getting AI move:', error);
+      throw error;
     }
-};
-const blackTurnAIMove = async () => {
-  if (playerTurn !== 'black') {
+  };
+
+  const blackTurnAIMove = async () => {
+    if (playerTurn !== 'black') {
       console.log("Not black's turn, skipping AI move");
       return;
-  }
+    }
 
-  setIsAIThinking(true);
+    setIsAIThinking(true);
 
-  try {
+    try {
       const response = await getAIMove();
       console.log('AI response:', response);
       if (response && response.move) {
-          const move = response.move;
-          console.log('AI chose move:', move);
+        const move = response.move;
+        console.log('AI chose move:', move);
 
-          if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
-              const { startRow, startCol, endRow, endCol } = move;
-              const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
-              if (!moveSuccess) {
-                  console.error('AI attempted an invalid move');
-                  showAlert('AI attempted an invalid move');
-              }
-          } else {
-              console.log('AI returned an invalid move format');
-              showAlert('AI move error. Invalid move format.');
+        if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
+          const { startRow, startCol, endRow, endCol } = move;
+          const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
+          if (!moveSuccess) {
+            console.error('AI attempted an invalid move');
+            showAlert('AI attempted an invalid move');
           }
+        } else {
+          console.log('AI returned an invalid move format');
+          showAlert('AI move error. Invalid move format.');
+        }
       } else {
-          console.log('AI did not return a valid move');
-          showAlert('AI move error. Please try again.');
+        console.log('AI did not return a valid move');
+        showAlert('AI move error. Please try again.');
       }
-  } catch (error) {
+    } catch (error) {
       console.error('Error during AI move:', error);
       showAlert('Network error. Please check your connection and try again.');
-  } finally {
-      setIsAIThinking(false); // Set AI thinking state back to false
-  }
-};
-// const blackTurnAIMove = async () => {
-//     if (playerTurn !== 'black') {
-//         console.log("Not black's turn, skipping AI move");
-//         return;
-//     }
-
-//     try {
-//         const response = await getAIMove();
-//         console.log('AI response:', response);
-//         if (response && response.move) {
-//             const move = response.move;
-//             console.log('AI chose move:', move);
-
-//             if (typeof move === 'object' && 'startRow' in move && 'startCol' in move && 'endRow' in move && 'endCol' in move) {
-//                 const { startRow, startCol, endRow, endCol } = move;
-//                 const moveSuccess = executeMove(startRow, startCol, endRow, endCol);
-//                 if (!moveSuccess) {
-//                     console.error('AI attempted an invalid move');
-//                     showAlert('AI attempted an invalid move');
-//                 }
-//             } else {
-//                 console.log('AI returned an invalid move format');
-//                 showAlert('AI move error. Invalid move format.');
-//             }
-//         } else {
-//             console.log('AI did not return a valid move');
-//             showAlert('AI move error. Please try again.');
-//         }
-//     } catch (error) {
-//         console.error('Error during AI move:', error);
-//         showAlert('Network error. Please check your connection and try again.');
-//     }
-// };
-
+    } finally {
+      setIsAIThinking(false);
+    }
+  };
 
   const handleClick = (row, col) => {
     const chessPiece = board[row][col];
@@ -251,7 +218,6 @@ const blackTurnAIMove = async () => {
     } 
   };
 
-
   const isPathClear = (board, startRow, startCol, endRow, endCol) => {
     console.log('isPathClear being called from', startRow, startCol, endRow, endCol)
     const rowStep = Math.sign(endRow - startRow);
@@ -261,7 +227,7 @@ const blackTurnAIMove = async () => {
 
     while (currentRow !== endRow || currentCol !== endCol) {
       if (board[currentRow][currentCol] !== null) {
-        return false; // There's a piece in the way
+        return false;
       }
       currentRow += rowStep;
       currentCol += colStep;
@@ -274,7 +240,6 @@ const blackTurnAIMove = async () => {
     const attackingPiece = board[startRow][startCol];
     if (!attackingPiece) return false;
 
-    // Check if it's the correct player's turn
     if (attackingPiece.color !== playerTurn) {
       console.log('Wrong color piece selected');
       return false;
@@ -283,20 +248,16 @@ const blackTurnAIMove = async () => {
     const rowDiff = endRow - startRow;
     const colDiff = endCol - startCol;
 
-    // For black pieces, pawn movement should be downwards (positive rowDiff)
     const validPawnDirection = attackingPiece.color === 'black' ? rowDiff > 0 : rowDiff < 0;
 
     if (attackingPiece.type === 'pawn') {
       const targetPiece = board[endRow][endCol];
       if (Math.abs(rowDiff) === 1 && Math.abs(colDiff) === 1) {
-        // Diagonal capture
         return validPawnDirection && targetPiece && targetPiece.color !== attackingPiece.color;
       } else if (Math.abs(colDiff) === 0) {
-        // Forward movement
         if (Math.abs(rowDiff) === 1) {
           return validPawnDirection && !targetPiece;
         } else if (Math.abs(rowDiff) === 2) {
-          // Initial two-square move
           const initialRow = attackingPiece.color === 'black' ? 1 : 6;
           return startRow === initialRow && !targetPiece && !board[startRow + (rowDiff / 2)][startCol];
         }
@@ -317,7 +278,7 @@ const blackTurnAIMove = async () => {
         return !targetPiece || targetPiece.color !== attackingPiece.color;
       }
     } else if (attackingPiece.type === 'king') {
-      if (Math.abs(colDiff) === 1 || Math.abs(rowDiff) === 1) {
+      if (Math.abs(colDiff) <= 1 && Math.abs(rowDiff) <= 1) {
         const targetPiece = board[endRow][endCol];
         return !targetPiece || targetPiece.color !== attackingPiece.color;
       }
@@ -340,76 +301,86 @@ const blackTurnAIMove = async () => {
   };
 
   const executeMove = (startRow, startCol, endRow, endCol, promotionPiece = null) => {
-  console.log('executeMove called with:', startRow, startCol, endRow, endCol);
-  const newBoard = board.map((row) => [...row]);
-  let piece = board[startRow][startCol];
-  console.log('Piece to be moved:', piece);
+    console.log('executeMove called with:', startRow, startCol, endRow, endCol);
+    const newBoard = board.map((row) => [...row]);
+    let piece = board[startRow][startCol];
+    console.log('Piece to be moved:', piece);
 
-  // Basic move validation
-  if (!piece || piece.color !== playerTurn) {
-    console.error('Invalid move: No piece or wrong color');
-    return false;
-  }
+    if (!piece || piece.color !== playerTurn) {
+      console.error('Invalid move: No piece or wrong color');
+      return false;
+    }
 
-  // Handle pawn promotion
-  if (promotionPiece) {
-    piece = {
-      symbol: promotionPiece === 'Q' ? '♛' : promotionPiece === 'R' ? '♜' : promotionPiece === 'B' ? '♝' : '♞',
-      color: piece.color,
-      type: promotionPiece.toLowerCase()
-    };
-  }
+    if (promotionPiece) {
+      piece = {
+        symbol: promotionPiece === 'Q' ? '♛' : promotionPiece === 'R' ? '♜' : promotionPiece === 'B' ? '♝' : '♞',
+        color: piece.color,
+        type: promotionPiece.toLowerCase()
+      };
+    }
 
-  newBoard[endRow][endCol] = piece;
-  newBoard[startRow][startCol] = null;
+    newBoard[endRow][endCol] = piece;
+    newBoard[startRow][startCol] = null;
 
-  setBoard(newBoard);
-  setSelectedPiece(null);
-  const newTurn = playerTurn === 'white' ? 'black' : 'white';
-  setPlayerTurn(newTurn);
+    setBoard(newBoard);
+    setSelectedPiece(null);
+    const newTurn = playerTurn === 'white' ? 'black' : 'white';
+    setPlayerTurn(newTurn);
 
-  console.log(`Turn changed to ${newTurn}`);
+    console.log(`Turn changed to ${newTurn}`);
 
-  return true;
-};
+    return true;
+  };
 
-return (
-  <div className="chessboard-container">
-  {isAIThinking && (
-  <div className="ai-thinking-overlay">
-    <div className="ai-thinking-message">AI is thinking...</div>
-  </div>
-)}
-    <div className="chessPieces">
-      {board.map((row, rowIndex) => (
-        <div key={rowIndex} className="rowClass">
-          {row.map((piece, colIndex) => (
-            <div
-              key={colIndex}
-              className={`
-                ${colIndex % 2 === rowIndex % 2 ? "whiteSquare" : "blackSquare"}
-                ${selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex ? "selected-piece" : ""}
-              `}
-              onClick={() => handleClick(rowIndex, colIndex)}
-            >
-              {piece ? (
-                <img 
-                  src={piece.image} 
-                  alt={`${piece.color} ${piece.type}`} 
-                  className={`chess-piece ${piece.color}`}
-                />
-              ) : null}
+  const resetGame = () => {
+    setBoard(startingPosition);
+    setSelectedPiece(null);
+    setPlayerTurn('white');
+    setAlert({ show: false, message: "" });
+    setIsAIThinking(false);
+  };
+
+  return (
+    <div className="chess-app">
+      <div className="chessboard-container">
+        {isAIThinking && (
+          <div className="ai-thinking-overlay">
+            <div className="ai-thinking-message">AI is thinking...</div>
+          </div>
+        )}
+        <div className="chessPieces">
+          {board.map((row, rowIndex) => (
+            <div key={rowIndex} className="rowClass">
+              {row.map((piece, colIndex) => (
+                <div
+                  key={colIndex}
+                  className={`
+                    ${colIndex % 2 === rowIndex % 2 ? "whiteSquare" : "blackSquare"}
+                    ${selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex ? "selected-piece" : ""}
+                  `}
+                  onClick={() => handleClick(rowIndex, colIndex)}
+                >
+                  {piece ? (
+                    <img 
+                      src={piece.image} 
+                      alt={`${piece.color} ${piece.type}`} 
+                      className={`chess-piece ${piece.color}`}
+                    />
+                  ) : null}
+                </div>
+              ))}
             </div>
           ))}
         </div>
-      ))}
+      </div>
+      <div className="reset-button-container">
+        <button onClick={resetGame} className="reset-button">Reset Game</button>
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default App;
-
 
 
 
