@@ -3,25 +3,30 @@
   publish = "build"
 
 [build.environment]
-  NODE_VERSION = "16"  # Updated to a more recent LTS version
-  # Add any other environment variables your React app needs, for example:
-  # REACT_APP_API_URL = "https://your-heroku-backend.herokuapp.com"
+  NODE_VERSION = "16"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Optimizations for Single Page Applications
 [build.processing]
   skip_processing = false
+
 [build.processing.css]
   bundle = true
   minify = true
+
 [build.processing.js]
   bundle = true
   minify = true
+
 [build.processing.html]
   pretty_urls = true
+
 [build.processing.images]
   compress = true
+
+# Ignore Python-related files
+[build.ignore]
+  command = "git ls-files | grep -E '(Pipfile|Pipfile.lock|*.py|requirements.txt)'"
