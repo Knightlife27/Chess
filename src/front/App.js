@@ -1,21 +1,20 @@
 
-import "./styles.css";
+import "../styles.css"
 import React, { useState, useEffect } from "react";
 
 
-// Import chess piece images from the assets folder
-import whiteKingImg from './assets/wk.png'; 
-import whiteQueenImg from './assets/wq.png';
-import whiteRookImg from './assets/wr.png';
-import whiteBishopImg from './assets/wb.png';
-import whiteKnightImg from './assets/wn.png';
-import whitePawnImg from './assets/wp.png';
-import blackKingImg from './assets/bk.png';
-import blackQueenImg from './assets/bq.png';
-import blackRookImg from './assets/br.png';
-import blackBishopImg from './assets/bb.png';
-import blackKnightImg from './assets/bn.png';
-import blackPawnImg from './assets/bp.png';
+import whiteKingImg from '../assets/wk.png'; 
+import whiteQueenImg from '../assets/wq.png';
+import whiteRookImg from '../assets/wr.png';
+import whiteBishopImg from '../assets/wb.png';
+import whiteKnightImg from '../assets/wn.png';
+import whitePawnImg from '../assets/wp.png';
+import blackKingImg from '../assets/bk.png';
+import blackQueenImg from '../assets/bq.png';
+import blackRookImg from '../assets/br.png';
+import blackBishopImg from '../assets/bb.png';
+import blackKnightImg from '../assets/bn.png';
+import blackPawnImg from '../assets/bp.png';
 
 
 
@@ -130,7 +129,7 @@ const App = () => {
     console.log("Attempting to get AI move");
     console.log("Current board state:", board);
     try {
-      const response = await fetch('https://ominous-pancake-5gq9gprrwrrw24667-5000.app.github.dev/get_move', {
+      const response = await fetch("https://ominous-pancake-5gq9gprrwrrw24667-5000.app.github.dev/get_move", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
