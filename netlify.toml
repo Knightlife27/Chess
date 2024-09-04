@@ -1,0 +1,31 @@
+[build]
+  command = "pip install -r requirements.txt --target netlify/functions"
+  publish = "public"  # Adjust this if you have a specific frontend build directory
+
+[build.environment]
+  PYTHON_VERSION = "3.9"  # Adjust this to match your Python version
+  # Add any other environment variables your app needs, for example:
+  # MY_CUSTOM_VAR = "some value"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"  # This can help with Python dependencies
+
+# If you need to ignore certain files or directories during deployment, you can use:
+# [build.processing]
+#   skip_processing = false
+# [build.processing.css]
+#   bundle = true
+#   minify = true
+# [build.processing.js]
+#   bundle = true
+#   minify = true
+# [build.processing.html]
+#   pretty_urls = true
+# [build.processing.images]
+#   compress = true

@@ -6,8 +6,10 @@ import base64
 import hashlib
 import random
 import os
+from flask_lambda import FlaskLambda
 
 app = Flask(__name__)
+lambda_handler = FlaskLambda(app)
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
 
 ai = ChessAI()
@@ -118,6 +120,9 @@ def get_move():
     except Exception as e:
         print(f"Error processing move: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
+
+def handler(event, context):
+    return lambda_handler(event, context)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
