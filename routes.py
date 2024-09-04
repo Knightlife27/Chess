@@ -5,10 +5,19 @@ import chess
 import hashlib
 import random
 import os
-from flask_lambda import FlaskLambda
 
-app = Flask(__name__)
-lambda_handler = FlaskLambda(app)
+# Conditional import for AWS Lambda
+try:
+    from flask_lambda import FlaskLambda
+    lambda_mode = True
+except ImportError:
+    lambda_mode = False
+
+# Initialize Flask app
+if lambda_mode:
+    app = FlaskLambda(__name__)
+else:
+    app = Flask(__name__)
 
 # Update CORS configuration
 CORS(app, resources={r"/*": {"origins": [
@@ -126,9 +135,12 @@ def get_move():
         print(f"Error processing move: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
-def handler(event, context):
-    return lambda_handler(event, context)
+# AWS Lambda handler
+if lambda_mode:
+    def handler(event, context):
+        return app.handle_lambda_event(event, context)
 
+# Run the Flask app if not in Lambda mode
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
