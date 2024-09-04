@@ -3,7 +3,7 @@
   publish = "build"
 
 [build.environment]
-  PYTHON_VERSION = "3.8"
+  NODE_VERSION = "14"
   # Add any other environment variables your React app needs, for example:
   # REACT_APP_API_URL = "https://your-heroku-backend.herokuapp.com"
 
