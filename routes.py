@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chessai import ChessAI
 import chess
-import base64
 import hashlib
 import random
 import os
