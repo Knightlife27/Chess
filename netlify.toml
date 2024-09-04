@@ -1,20 +1,15 @@
 [build]
-  command = "pip install -r requirements.txt --target netlify/functions"
-  publish = "public"  # Adjust this if you have a specific frontend build directory
-
-[build.environment]
-  PYTHON_VERSION = "3.9"  # Adjust this to match your Python version
-  # Add any other environment variables your app needs, for example:
-  # MY_CUSTOM_VAR = "some value"
+  command = "npm run build"
+  publish = "build"
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/api"
+  to = "/index.html"
   status = 200
 
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"  # This can help with Python dependencies
+[build.environment]
+  # Add any environment variables your React app needs, for example:
+  # REACT_APP_API_URL = "https://your-heroku-backend.herokuapp.com"
 
 # If you need to ignore certain files or directories during deployment, you can use:
 # [build.processing]

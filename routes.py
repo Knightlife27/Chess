@@ -10,7 +10,9 @@ from flask_lambda import FlaskLambda
 
 app = Flask(__name__)
 lambda_handler = FlaskLambda(app)
-CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
+
+# Update CORS configuration
+CORS(app, resources={r"/*": {"origins": ["https://your-netlify-app.netlify.app", "http://localhost:3000"], "methods": ["GET", "POST", "OPTIONS"]}})
 
 ai = ChessAI()
 
