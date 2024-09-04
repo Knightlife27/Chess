@@ -8,6 +8,7 @@ flask = "*"
 flask-cors = "*"
 chess = "*"
 python-chess = "*"
+gunicorn = "*"
 
 [dev-packages]
 
