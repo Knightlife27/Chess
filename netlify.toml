@@ -28,5 +28,4 @@
   compress = true
 
 # Ignore Python-related files
-[build.ignore]
-  command = "git ls-files | grep -E '(Pipfile|Pipfile.lock|*.py|requirements.txt)'"
+ignore = "git ls-files | grep -E '(Pipfile|Pipfile.lock|*.py|requirements.txt)'"
