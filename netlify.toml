@@ -2,14 +2,15 @@
   command = "npm run build"
   publish = "build"
 
+[build.environment]
+  PYTHON_VERSION = "3.8"
+  # Add any other environment variables your React app needs, for example:
+  # REACT_APP_API_URL = "https://your-heroku-backend.herokuapp.com"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[build.environment]
-  # Add any environment variables your React app needs, for example:
-  # REACT_APP_API_URL = "https://your-heroku-backend.herokuapp.com"
 
 # If you need to ignore certain files or directories during deployment, you can use:
 # [build.processing]
