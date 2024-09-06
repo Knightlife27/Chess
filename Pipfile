@@ -9,6 +9,7 @@ flask-cors = "*"
 chess = "*"
 python-chess = "*"
 gunicorn = "*"
+markupsafe = "==2.0.1"
 
 [dev-packages]
 
